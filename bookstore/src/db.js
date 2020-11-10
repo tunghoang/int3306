@@ -18,6 +18,9 @@ Author.init(authorModel.schema, {
   modelName: authorModel.modelName
 });
 
+Book.belongsTo(Author);
+Author.hasMany(Book);
+
 async function init() {
   await db.authenticate();
   await db.sync();

@@ -2,22 +2,73 @@ const express = require('express');
 const router = express.Router();
 const {models} = require('../db');
 const Book = models.Book;
+const Author = models.Author;
 
 router.post('/list', async function(req, res) {
-  let books = await Book.findAll();
-  console.log(books);
-  res.send(books);
+  let books = Book.findAll({
+    include: [Author]
+  }).then(books => {
+    res.send({
+      success: true,
+      data:books
+    });
+  }).catch(e => {
+    res.send({
+      success: false,
+      data: e.message
+    });
+  });
 });
 
 router.post('/new', function(req, res) {
-  res.send('Create books');
+  let book = Book.build(req.body);
+  book.save().then(b => {
+    res.send({
+      success: true,
+      data: b
+    });
+  }).catch(error => {
+    res.send({
+      success: false,
+      data: e.message
+    })
+  });
 });
 
-router.post('/edit', function(req, res) {
-  res.send('Edit books');
+router.post('/edit/:idBook', function(req, res) {
+  let book = req.body;
+  console.log(book);
+  let idBook = req.params.idBook;
+  Book.findByPk(idBook).then(b => {
+    b.title = book.title;
+    return b.save();
+  }).then(b => {
+    res.send({
+      success: true,
+      data: b
+    })
+  }).catch(e => {
+    res.send({
+      success: false,
+      data: e.message
+    });
+  });
 });
 
-router.get('/delete', function(req, res) {
-  res.send('Delete books');
+router.get('/delete/:idBook', function(req, res) {
+  let idBook = req.params.idBook;
+  Book.findByPk(idBook).then(b => {
+    return b.destroy();
+  }).then(b => {
+    res.send({
+      success: true,
+      data: b
+    });
+  }).catch(e => {
+    res.send({
+      success: false,
+      data: e.message
+    });
+  });
 });
 module.exports = router;
