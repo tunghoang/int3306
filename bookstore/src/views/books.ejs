@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Books</title>
+        <style type="text/css">
+        </style>
+    </head>
+    <body>
+        <h1>Books -<%= view %>-</h1>
+        <ul>
+          <% for (let book of books) { %>
+            <li>
+              <a href="<%='list/' + book.idBook%>" ><%= book.title %></a>
+            </li>
+          <% } %>
+        </ul>
+    </body>
+</html>
